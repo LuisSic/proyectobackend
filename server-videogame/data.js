@@ -1,3 +1,19 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const VideogameSchema = new Schema({
+    titulo_juego: String,
+    plataforma: String,
+    edicion: String,
+    descripcion: String,
+    desarrolladora: String,
+    clasificacion: String,
+    url_imagen: String
+});
+
+module.exports = mongoose.model('videogame',VideogameSchema);
+
+/*
 const data = [
     {
         "id": 1,
@@ -10,5 +26,4 @@ const data = [
         "Descripcion": "Prueba de objetos"
     }
 ]
-
-module.exports = data;
+*/

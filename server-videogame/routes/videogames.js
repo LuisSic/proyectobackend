@@ -1,65 +1,66 @@
-
 var express = require('express');
 var router = express.Router();
 var func = require('../CRUD/funciones');
+//const Videogame = require('../data');
 
 /* GET users listing. */
+
 router.get('/', function(req, res, next) {
-  let videogames = func.listVideogame();
-  if(!videogames)
-  {
-    res.status(404).json({message:"No se encontraron datos"});
-    //res.json({codigo:404 , message:"No se encontraron datos", data: ""});
-  }
-  res.status(200).json(videogames);
-  //res.json({codigo: 200, message:"Lista de videojuegos", data: JSON.stringify(videogames)});
+  func.listVideogame().then(response => {
+    if (response.length > 0) {
+      res.status(200).json(response)
+    } else {
+      res.status(404).json({message:"Ohhh ha ocurrido un error al obtener los videojuegos!"});
+    }
+  }).catch(error => console.error(error));
 });
 
-router.get('/:id', function(req, res, next) {
-  const requestId = req.params.id;
-  let videogame = func.SearchVideogame(requestId);
-  if(videogame.length == 0)
-  {
-    res.status(404).json({message:"No se encontro el videojuego solicitado"});
-    //res.json({codigo:404 , message:"No se encontro el videojuego solicitado", data: ""});
-  }
-  res.status(200).json(videogame);
-  //res.json({codigo: 200, message:"Juego encontrado", data: JSON.stringify(videogame)});
+router.get('/search/:id', function(req, res, next) {
+  //const requestId = req.params.id;
+  func.SearchVideogame(req.params.id).then(response => {
+    if (response.length > 0) {
+      res.status(200).json(response)
+    } else {
+      res.status(404).json({message:"No se encontro el videojuego solicitado"});
+    }
+  }).catch(error => console.error(error));
 });
 
-router.post('/SaveVideogame', function(req, res, next){
-  let SaveVideogame = func.SaveVideogame(req);
-  if(!SaveVideogame)
-  {
-    res.status(404).json({message:"No se pudo guardar el videojuego"});
-    //res.json({codigo:404 , message:"No se pudo guardar el videojuego", data: ""});
-  }
-  res.status(201);
-  //res.json({codigo: 201, message:"Juego guardado exitosamente", data: JSON.stringify(SaveVideogame)});
+router.post('/SaveVideogame', async (req, res, next) => {
+  res.setHeader('Content-Type', 'application/json');
+	if (req.headers["content-type"] == 'application/json') {
+    func.SaveVideogame(req.body).then(response => {
+			if (response.result.ok) {
+				res.status(201);
+			} else {
+				res.status(404).json({message:"No se pudo guardar el videojuego"});
+			}
+		}).catch(error => console.error(error));
+	} else {
+		res.status(404).json({message:"No se pudo guardar el videojuego"});
+	}
 });
 
 router.put('/:id', function(req, res, next) {
-  const requestId = req.params.id;
-  let videogame = func.UpdateVideogame(requestId, req);
-  if(!videogame)
-  {
-    res.status(404).json({message:"No se encontro el videojuego"});
-    //res.json({codigo:404 , message:"No se encontro el videojuego", data: ""});
-  }
-  res.status(204);
-  //res.json({codigo: 204, message:"Juego Actualizado exitosamente", data: JSON.stringify(videogame)});
+  res.setHeader('Content-Type', 'application/json');
+	func.UpdateVideogame(req.params.id, req.body).then(response => {
+		if (response.result.ok) {
+			res.status(204);
+		} else {
+			res.status(404).json({message:"No se encontro el videojuego"});
+		}
+	}).catch(error => console.error(error));
 });
 
 router.delete('/:id', function(req, res, next){
-  const requestId = req.params.id;
-  let videogame = func.DeleteVideogame(requestId);
-  if(!videogame)
-  {
-    res.status(404).json({message:"No se encontro el videojuego"});
-    //res.json({codigo:404 , message:"No se encontro el videojuego", data: ""});
-  }
-  res.status(204);
-  //res.json({codigo: 204, message:"videojuego eliminado exitosamente: "+requestId, data:""});
+  res.setHeader('Content-Type', 'application/json');
+	func.DeleteVideogame(req.params.id).then(response => {
+		if (response.result.ok) {
+			res.status(204);
+		} else {
+			res.status(404).json({message:"No se encontro el videojuego"});
+		}
+	}).catch(error => console.error(error));
 });
 
 module.exports = router;
