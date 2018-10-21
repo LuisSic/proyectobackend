@@ -5,7 +5,7 @@ var func = require('../CRUD/funciones');
 
 /* GET users listing. */
 
-router.get('/', function(req, res, next) {
+router.get('/all', function(req, res, next) {
   func.listVideogame().then(response => {
     if (response.length > 0) {
       res.status(200).json(response)
