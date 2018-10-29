@@ -30,8 +30,8 @@ router.post('/SaveVideogame', async (req, res, next) => {
   res.setHeader('Content-Type', 'application/json');
 	if (req.headers["content-type"] == 'application/json') {
     func.SaveVideogame(req.body).then(response => {
-			if (response.result.ok) {
-				res.status(201);
+			if (response.result.n > 0) {
+				res.status(201).send();
 			} else {
 				res.status(404).json({message:"No se pudo guardar el videojuego"});
 			}
@@ -44,8 +44,8 @@ router.post('/SaveVideogame', async (req, res, next) => {
 router.put('/:id', function(req, res, next) {
   res.setHeader('Content-Type', 'application/json');
 	func.UpdateVideogame(req.params.id, req.body).then(response => {
-		if (response.result.ok) {
-			res.status(204);
+		if (response.result.nModified) {
+			res.status(204).send();
 		} else {
 			res.status(404).json({message:"No se encontro el videojuego"});
 		}
@@ -55,8 +55,8 @@ router.put('/:id', function(req, res, next) {
 router.delete('/:id', function(req, res, next){
   res.setHeader('Content-Type', 'application/json');
 	func.DeleteVideogame(req.params.id).then(response => {
-		if (response.result.ok) {
-			res.status(204);
+		if (response.result.n > 0) {
+			res.status(204).send();
 		} else {
 			res.status(404).json({message:"No se encontro el videojuego"});
 		}
