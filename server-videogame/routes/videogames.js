@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var func = require('../CRUD/funciones');
-var cors = require('cors');
 var redis = require('redis');
 var expressJoi = require('express-joi-validator');
 var client = redis.createClient();
-router.use(cors());
 client.on('connect',function() {
   console.log('connected');
 });
