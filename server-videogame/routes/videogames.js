@@ -34,7 +34,7 @@ router.get('/all',function(req, res, next) {
   });
 });
 
-router.get('/search/:id', function(req, res, next) {
+router.get('/search/:id', expressJoi(func.schemaId),function(req, res, next) {
   return client.get(req.params.id, (err, result) => {
     if(result) {
       const resultJSON = JSON.parse(result);
@@ -56,7 +56,7 @@ router.get('/search/:id', function(req, res, next) {
   });
 });
 
-router.post('/SaveVideogame', expressJoi(func.schema),function (req, res, next) {
+router.post('/SaveVideogame', expressJoi(func.schemaPost),function (req, res, next) {
 	if (req.headers["content-type"] == 'application/json') {
     func.SaveVideogame(req.body).then(response => {
 			if (response.result.n > 0) {
@@ -73,7 +73,7 @@ router.post('/SaveVideogame', expressJoi(func.schema),function (req, res, next) 
 	}
 });
 
-router.put('/:id', expressJoi(func.schema),function(req, res, next) {
+router.put('/:id', expressJoi(func.schemaUpdate),function(req, res, next) {
 	func.UpdateVideogame(req.params.id, req.body).then(response => {
     if (response.result.nModified) {
 			res.status(204).send();
@@ -86,7 +86,7 @@ router.put('/:id', expressJoi(func.schema),function(req, res, next) {
 	});
 });
 
-router.delete('/:id', function(req, res, next){
+router.delete('/:id', expressJoi(func.schemaId),function(req, res, next){
 	func.DeleteVideogame(req.params.id).then(response => {
 		if (response.result.n > 0) {
 			res.status(204).send();

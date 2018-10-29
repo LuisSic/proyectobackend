@@ -9,7 +9,26 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true })
   db = client.db('arcade');
   collection = db.collection('videogame');
 }).catch(error => console.error(error));
- const schema = {
+const schemaUpdate = {
+    body: {
+        titulo_juego: Joi.string().required(),
+        plataforma: Joi.string().required(),
+        edicion: Joi.string().required(),
+        descripcion: Joi.string().required(),
+        desarrolladora: Joi.string().required(),
+        clasificacion: Joi.string().required(),
+        url_imagen: Joi.string().required()
+    },
+    params: {
+        id: Joi.string().alphanum().min(24).max(24).required()
+    }
+  }
+  const schemaId = {
+    params: {
+        id: Joi.string().alphanum().min(24).max(24).required()
+    }
+  }
+ const schemaPost = {
     body: {
         titulo_juego: Joi.string().required(),
         plataforma: Joi.string().required(),
@@ -22,7 +41,9 @@ MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true })
   }
   
 module.exports = {
-    schema,
+    schemaPost,
+    schemaId,
+    schemaUpdate,
     listVideogame: function()
     {
         return collection.find({}).toArray();
