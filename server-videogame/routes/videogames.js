@@ -3,8 +3,9 @@ var router = express.Router();
 var func = require('../CRUD/funciones');
 var cors = require('cors');
 var redis = require('redis');
+var expressJoi = require('express-joi-validator');
 var client = redis.createClient();
-
+router.use(cors());
 client.on('connect',function() {
   console.log('connected');
 });
@@ -12,23 +13,16 @@ client.on('error', function (err) {
   console.log('Something went wrong ' + err);
 });
 
-router.use(cors());
 
-//const Videogame = require('../data');
-
-/* GET users listing. */
-
-router.get('/all', function(req, res, next) {
+router.get('/all',function(req, res, next) {
   return client.get('allvideogames', (err, result) => {
     if(result) {
-      console.log('GET result ->' + result);
       const resultJSON = JSON.parse(result);
       return res.status(200).json(resultJSON);
     }
     else{
       func.listVideogame().then(response => {
         if (response.length > 0) {
-          console.log('Put result ->' + JSON.stringify(response));
           client.setex('allvideogames', 5, JSON.stringify(response));
           return res.status(200).json(response);
         } else {
@@ -45,14 +39,12 @@ router.get('/all', function(req, res, next) {
 router.get('/search/:id', function(req, res, next) {
   return client.get(req.params.id, (err, result) => {
     if(result) {
-      console.log('GET result ->' + result);
       const resultJSON = JSON.parse(result);
       return res.status(200).json(resultJSON);
     }
     else{
       func.SearchVideogame(req.params.id).then(response => {
         if (response.length > 0) {
-          console.log('Put result ->' + JSON.stringify(response));
           client.setex(req.params.id, 5, JSON.stringify(response));
           return res.status(200).json(response);
         } else {
@@ -66,11 +58,10 @@ router.get('/search/:id', function(req, res, next) {
   });
 });
 
-router.post('/SaveVideogame', async (req, res, next) => {
-  res.setHeader('Content-Type', 'application/json');
+router.post('/SaveVideogame', expressJoi(func.schema),function (req, res, next) {
 	if (req.headers["content-type"] == 'application/json') {
     func.SaveVideogame(req.body).then(response => {
-			if (response.result.ok) {
+			if (response.result.n > 0) {
 				res.status(201).send();
 			} else {
 				res.status(404).json({message:"No se pudo guardar el videojuego"});
@@ -84,10 +75,9 @@ router.post('/SaveVideogame', async (req, res, next) => {
 	}
 });
 
-router.put('/:id', function(req, res, next) {
-	res.setHeader('Content-Type', 'application/json');
+router.put('/:id', expressJoi(func.schema),function(req, res, next) {
 	func.UpdateVideogame(req.params.id, req.body).then(response => {
-		if (response.result.ok) {
+    if (response.result.nModified) {
 			res.status(204).send();
 		} else {
 			res.status(404).json({message:"No se encontro el videojuego"});
@@ -99,9 +89,8 @@ router.put('/:id', function(req, res, next) {
 });
 
 router.delete('/:id', function(req, res, next){
-  res.setHeader('Content-Type', 'application/json');
 	func.DeleteVideogame(req.params.id).then(response => {
-		if (response.result.ok) {
+		if (response.result.n > 0) {
 			res.status(204).send();
 		} else {
 			res.status(404).json({message:"No se encontro el videojuego"});
