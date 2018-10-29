@@ -24,7 +24,7 @@ router.get('/all',function(req, res, next) {
           client.setex('allvideogames', 5, JSON.stringify(response));
           return res.status(200).json(response);
         } else {
-          return res.status(200).json(response);
+          return res.status(404).json(response);
         }
       }).catch(error => {
         console.log(error);
