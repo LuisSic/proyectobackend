@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+    app:
+        image: 'front-end'
+        build: ..\..\ProyectoPrograWeb\angular-web-luis
+        ports:
+            - 8000:80
+    express: # name of the second service
+        build: '.' # specify the directory of the Dockerfile
+        ports:
+            - "3000:3000" #specify ports mapping
+        links:
+            - hostmongo # link this service to the database service
+            - hostredis
+    hostredis:
+        image: redis
+        ports:
+            - "6379:6379"
+    hostmongo: # name of the third service
+        image: mongo # specify image to build container from
+        ports:
+            - "27017:27017" # specify port forwarding

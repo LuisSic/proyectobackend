@@ -4,7 +4,8 @@ var ObjectId = require('mongodb').ObjectId;
 var Joi = require('joi');
 var db;
 var collection;
-MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true })
+MongoClient.connect("mongodb://hostmongo:27017", { useNewUrlParser: true })
+//MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true })
 .then(client => {
   db = client.db('arcade');
   collection = db.collection('videogame');

@@ -3,7 +3,8 @@ var router = express.Router();
 var func = require('../CRUD/funciones');
 var redis = require('redis');
 var expressJoi = require('express-joi-validator');
-var client = redis.createClient();
+var client = redis.createClient(6379,'hostredis');
+//var client = redis.createClient();
 client.on('connect',function() {
   console.log('connected');
 });
@@ -24,7 +25,7 @@ router.get('/all',function(req, res, next) {
           client.setex('allvideogames', 5, JSON.stringify(response));
           return res.status(200).json(response);
         } else {
-          return res.status(404).json(response);
+          return res.status(404).json({message:"No hay datos en la base de datos"});
         }
       }).catch(error => {
         console.log(error);
@@ -69,7 +70,7 @@ router.post('/SaveVideogame', expressJoi(func.schemaPost),function (req, res, ne
 			res.status(500).json({message:"Ohhh ha ocurrido un error en el servidor"});
 		});
 	} else {
-		res.status(404).json({message:"No se pudo guardar el videojuego"});
+		res.status(404).json({message:"No se pudo guardar la orden"});
 	}
 });
 
