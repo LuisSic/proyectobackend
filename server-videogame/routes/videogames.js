@@ -8,7 +8,7 @@ var func = require('../CRUD/funciones');
 router.get('/all', function(req, res, next) {
   func.listVideogame().then(response => {
     if (response.length > 0) {
-      res.status(200).json(response)
+      res.status(200).json(response);
     } else {
       res.status(404).json({message:"Ohhh ha ocurrido un error al obtener los videojuegos!"});
     }
@@ -19,7 +19,7 @@ router.get('/search/:id', function(req, res, next) {
   //const requestId = req.params.id;
   func.SearchVideogame(req.params.id).then(response => {
     if (response.length > 0) {
-      res.status(200).json(response)
+      res.status(200).json(response);
     } else {
       res.status(404).json({message:"No se encontro el videojuego solicitado"});
     }
@@ -27,7 +27,7 @@ router.get('/search/:id', function(req, res, next) {
 });
 
 router.post('/SaveVideogame', async (req, res, next) => {
-  res.setHeader('Content-Type', 'application/json');
+  //res.setHeader('Content-Type', 'application/json');
 	if (req.headers["content-type"] == 'application/json') {
     func.SaveVideogame(req.body).then(response => {
 			if (response.result.n > 0) {
@@ -42,7 +42,7 @@ router.post('/SaveVideogame', async (req, res, next) => {
 });
 
 router.put('/:id', function(req, res, next) {
-  res.setHeader('Content-Type', 'application/json');
+  //res.setHeader('Content-Type', 'application/json');
 	func.UpdateVideogame(req.params.id, req.body).then(response => {
 		if (response.result.nModified) {
 			res.status(204).send();
@@ -53,7 +53,7 @@ router.put('/:id', function(req, res, next) {
 });
 
 router.delete('/:id', function(req, res, next){
-  res.setHeader('Content-Type', 'application/json');
+  //res.setHeader('Content-Type', 'application/json');
 	func.DeleteVideogame(req.params.id).then(response => {
 		if (response.result.n > 0) {
 			res.status(204).send();
