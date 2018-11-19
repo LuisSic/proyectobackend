@@ -13,6 +13,9 @@ services:
         links:
             - hostmongo # link this service to the database service
             - hostredis
+        depends_on:
+            - hostmongo
+            - hostredis
     hostredis:
         image: redis
         ports:

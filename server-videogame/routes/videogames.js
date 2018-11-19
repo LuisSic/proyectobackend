@@ -3,8 +3,8 @@ var router = express.Router();
 var func = require('../CRUD/funciones');
 var redis = require('redis');
 var expressJoi = require('express-joi-validator');
-var client = redis.createClient(6379,'hostredis');
-//var client = redis.createClient();
+//var client = redis.createClient(6379,'');
+var client = redis.createClient();
 client.on('connect',function() {
   console.log('connected');
 });
@@ -12,8 +12,18 @@ client.on('error', function (err) {
   console.log('Something went wrong ' + err);
 });
 
+setInterval(function(){
+  client.ping(function (err, result){
+    if(result){
+      console.log("Haciendo ping a redis");
+    }
+    if(err){
+      console.log("Ocurrio un error :c " + err);
+    }
+  })
+}, 60000);
 
-router.get('/all',function(req, res, next) {
+router.get('/',function(req, res, next) {
   return client.get('allvideogames', (err, result) => {
     if(result) {
       const resultJSON = JSON.parse(result);
@@ -25,7 +35,8 @@ router.get('/all',function(req, res, next) {
           client.setex('allvideogames', 5, JSON.stringify(response));
           return res.status(200).json(response);
         } else {
-          return res.status(404).json({message:"No hay datos en la base de datos"});
+          return res.status(200).json(response);
+          //return res.status(404).json({message:"No hay datos en la base de datos"});
         }
       }).catch(error => {
         console.log(error);
@@ -35,7 +46,7 @@ router.get('/all',function(req, res, next) {
   });
 });
 
-router.get('/search/:id', expressJoi(func.schemaId),function(req, res, next) {
+router.get('/:id', expressJoi(func.schemaId),function(req, res, next) {
   return client.get(req.params.id, (err, result) => {
     if(result) {
       const resultJSON = JSON.parse(result);
@@ -57,7 +68,7 @@ router.get('/search/:id', expressJoi(func.schemaId),function(req, res, next) {
   });
 });
 
-router.post('/SaveVideogame', expressJoi(func.schemaPost),function (req, res, next) {
+router.post('/', expressJoi(func.schemaPost),function (req, res, next) {
 	if (req.headers["content-type"] == 'application/json') {
     func.SaveVideogame(req.body).then(response => {
 			if (response.result.n > 0) {
