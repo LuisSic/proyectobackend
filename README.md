@@ -35,7 +35,7 @@ Luego se debera tener el servicio de redis corriendo y el servicio de Mongo. Pos
 
 Se deberá crear una base de datos llamada arcade y una colleción videogame.
 
-Por ultimo para iniciar el Api se tendrá que ejecutar el siguiente comando, que esta corriendo en la siguiente url `http://localhost:3000/videogame`
+Por ultimo para iniciar el Api se tendrá que ejecutar el siguiente comando, que estará corriendo en la siguiente url `http://localhost:3000/videogame`
 
 ```
 npm start
